@@ -1,14 +1,18 @@
 import axios from "axios";
 import { useState } from "react";
+import { CgSpinner } from "react-icons/cg";
 
-const ChatBar = () => {
+const ChatBar = ({ setChatList, chatList }) => {
   const [newQuestion, setNewQuestion] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const onSubmitChat = async (e) => {
     try {
       e.preventDefault();
 
       if (!newQuestion) return;
+
+      setIsLoading(true);
 
       const response = await axios.post(
         "https://api.openai.com/v1/chat/completions",
@@ -29,10 +33,20 @@ const ChatBar = () => {
         }
       );
       console.log(response);
+      setChatList([
+        ...chatList,
+        {
+          question: newQuestion,
+          answer: response.data.choices[0].message.content,
+        },
+      ]);
 
       setNewQuestion("");
+
+      setIsLoading(false);
     } catch (error) {
       console.log(error);
+      setIsLoading(false);
     }
   };
 
@@ -40,22 +54,30 @@ const ChatBar = () => {
     <div className=" h-24">
       <form className="0 h-full items-center flex px-4" onSubmit={onSubmitChat}>
         <input
-          className="  grow py-1 px-2 focus:outline-none border-2 focus:border-pink-400 mr-4 rounded-lg"
+          className={`grow py-1 px-2 focus:outline-none border-2 focus:border-pink-400 mr-4 rounded-lg ${
+            isLoading && "bg-gray-100 text-gray-500"
+          } `}
           onChange={(e) => setNewQuestion(e.target.value)}
           type="text"
-          disabled={false}
+          disabled={isLoading}
+          value={newQuestion}
+          placeholder="무엇이든 물어보세요! Chat-GPT"
         />
-        <input
-          className="bg-pink-400 w-28 py-[6px] text-sm font-semibold text-white hover:bg-pink-600 active:bg-pink-400 rounded-lg"
+
+        <button
+          className="bg-pink-400 w-28 py-[6px] text-sm font-semibold text-white hover:bg-pink-600 active:bg-pink-400 rounded-lg flex justify-center"
           type="submit"
-          value="검 색"
-          disabled={true}
-        />
+          disabled={isLoading}
+        >
+          {isLoading ? (
+            <CgSpinner size={22} className="animate-spin" />
+          ) : (
+            "검 색"
+          )}
+        </button>
       </form>
     </div>
   );
 };
 
 export default ChatBar;
-
-// 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
