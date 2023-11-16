@@ -51,7 +51,7 @@ const ChatBar = ({ setChatList, chatList }) => {
   };
 
   return (
-    <div className=" h-24">
+    <div className=" h-24 absolute bottom-0 w-full">
       <form className="0 h-full items-center flex px-4" onSubmit={onSubmitChat}>
         <input
           className={`grow py-1 px-2 focus:outline-none border-2 focus:border-pink-400 mr-4 rounded-lg ${
@@ -70,7 +70,7 @@ const ChatBar = ({ setChatList, chatList }) => {
           disabled={isLoading}
         >
           {isLoading ? (
-            <CgSpinner size={22} className="animate-spin" />
+            <CgSpinner size={22} className="animate-spin " />
           ) : (
             "검 색"
           )}
